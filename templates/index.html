@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Лабораторна робота №4</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        pre { background-color: #f8f9fa; padding: 12px; border: 1px solid #dee2e6; border-radius: 6px; white-space: pre-wrap; font-size: 0.9rem; }
+        .card-header { font-weight: bold; }
+    </style>
+</head>
+<body class="bg-light">
+<div class="container py-4">
+    <h2 class="mb-2">Лабораторна робота №4</h2>
+    <p class="text-muted mb-4">Просунутий Prompt Engineering, Context Engineering та керування генерацією</p>
+
+    <ul class="nav nav-pills mb-4" id="taskTabs">
+        <li class="nav-item"><a class="nav-link {% if active_tab == 'task1' %}active{% endif %}" data-bs-toggle="pill" href="#t1">Завдання 1 (Prompt Eng)</a></li>
+        <li class="nav-item"><a class="nav-link {% if active_tab == 'task2' %}active{% endif %}" data-bs-toggle="pill" href="#t2">Завдання 2 (Декомпозиція)</a></li>
+        <li class="nav-item"><a class="nav-link {% if active_tab == 'task3' %}active{% endif %}" data-bs-toggle="pill" href="#t3">Завдання 3 (ReAct)</a></li>
+        <li class="nav-item"><a class="nav-link {% if active_tab == 'task4' %}active{% endif %}" data-bs-toggle="pill" href="#t4">Завдання 4 (JSON)</a></li>
+        <li class="nav-item"><a class="nav-link {% if active_tab == 'task5' %}active{% endif %}" data-bs-toggle="pill" href="#t5">Завдання 5 (Chunking)</a></li>
+        <li class="nav-item"><a class="nav-link {% if active_tab == 'task6' %}active{% endif %}" data-bs-toggle="pill" href="#t6">Завдання 6 (Параметри)</a></li>
+    </ul>
+
+    <div class="tab-content">
+        <!-- ТАБ 1 -->
+        <div class="tab-pane fade {% if active_tab == 'task1' %}show active{% endif %}" id="t1">
+            <form method="POST"><input type="hidden" name="active_tab" value="task1"><button class="btn btn-primary mb-3">Виконати Завдання 1</button></form>
+            {% if results.task1 %}
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-3"><div class="card-header bg-secondary text-white">Простий Prompt</div><div class="card-body"><pre>{{ results.task1.simple_res }}</pre></div></div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-3"><div class="card-header bg-success text-white">Просунутий Prompt</div><div class="card-body"><pre>{{ results.task1.advanced_res }}</pre></div></div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- ТАБ 2 -->
+        <div class="tab-pane fade {% if active_tab == 'task2' %}show active{% endif %}" id="t2">
+            <form method="POST"><input type="hidden" name="active_tab" value="task2"><button class="btn btn-primary mb-3">Виконати Завдання 2</button></form>
+            {% if results.task2 %}
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card"><div class="card-header bg-secondary text-white">Один загальний Prompt</div><div class="card-body"><pre>{{ results.task2.single_res }}</pre></div></div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card"><div class="card-header bg-success text-white">Послідовна декомпозиція</div><div class="card-body"><pre>{{ results.task2.decomposed_res }}</pre></div></div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- ТАБ 3 -->
+        <div class="tab-pane fade {% if active_tab == 'task3' %}show active{% endif %}" id="t3">
+            <form method="POST"><input type="hidden" name="active_tab" value="task3"><button class="btn btn-primary mb-3">Виконати Завдання 3</button></form>
+            {% if results.task3 %}
+            <div class="card"><div class="card-header bg-info text-white">Імітація ReAct (Задача → План → Виконання → Перевірка)</div><div class="card-body"><pre>{{ results.task3.react_res }}</pre></div></div>
+            {% endif %}
+        </div>
+
+        <!-- ТАБ 4 -->
+        <div class="tab-pane fade {% if active_tab == 'task4' %}show active{% endif %}" id="t4">
+            <form method="POST"><input type="hidden" name="active_tab" value="task4"><button class="btn btn-primary mb-3">Виконати Завдання 4</button></form>
+            {% if results.task4 %}
+            <div class="alert alert-info">{{ results.task4.status }}</div>
+            <div class="row">
+                <div class="col-md-6"><div class="card"><div class="card-header">JSON від моделі (Raw)</div><div class="card-body"><pre>{{ results.task4.raw_json }}</pre></div></div></div>
+                <div class="col-md-6"><div class="card"><div class="card-header">Розбір в Python (Parsed Object)</div><div class="card-body"><pre>{{ results.task4.parsed_data | tojson(indent=2) }}</pre></div></div></div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- ТАБ 5 -->
+        <div class="tab-pane fade {% if active_tab == 'task5' %}show active{% endif %}" id="t5">
+            <form method="POST">
+                <input type="hidden" name="active_tab" value="task5">
+                <button class="btn btn-primary mb-3">Виконати Завдання 5</button>
+            </form>
+            {% if results.task5 %}
+            <div class="row">
+
+                <div class="col-md-4">
+                    <div class="card mb-3">
+                        <div class="card-header bg-secondary text-white">Без Chunking (Суцільний)</div>
+                        <div class="card-body"><pre>{{ results.task5.no_chunk_res }}</pre></div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card mb-3">
+                        <div class="card-header bg-success text-white">Простий Chunking ({{ results.task5.chunks_count }} блоки)</div>
+                        <div class="card-body"><pre>{{ results.task5.chunked_res }}</pre></div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card mb-3">
+                        <div class="card-header bg-warning text-dark">Sliding Window ({{ results.task5.sw_chunks_count }} вікон)</div>
+                        <div class="card-body"><pre>{{ results.task5.sw_res }}</pre></div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- ТАБ 6 -->
+        <div class="tab-pane fade {% if active_tab == 'task6' %}show active{% endif %}" id="t6">
+            <form method="POST"><input type="hidden" name="active_tab" value="task6"><button class="btn btn-primary mb-3">Виконати Завдання 6</button></form>
+            {% if results.task6 %}
+            <h5 class="mt-2">Вплив Temperature</h5>
+            <div class="row mb-4">
+                {% for temp, text in results.task6.temp_results.items() %}
+                <div class="col-md-4"><div class="card"><div class="card-header">Temperature = {{ temp }}</div><div class="card-body"><pre>{{ text }}</pre></div></div></div>
+                {% endfor %}
+            </div>
+            <h5>Вплив Top-P (при Temperature = 0.7)</h5>
+            <div class="row">
+                {% for topp, text in results.task6.topp_results.items() %}
+                <div class="col-md-4"><div class="card"><div class="card-header">Top-P = {{ topp }}</div><div class="card-body"><pre>{{ text }}</pre></div></div></div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if results.error %}
+    <div class="alert alert-danger mt-4">{{ results.error }}</div>
+    {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
